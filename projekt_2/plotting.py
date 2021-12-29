@@ -2,6 +2,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 import csv
 
+###
+### TEN PROGRAM JEST WYLACZNIE POMOCNICZY
+###
+
 data = []
 
 with open('tr.txt') as csv_file:
