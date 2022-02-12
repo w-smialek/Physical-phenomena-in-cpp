@@ -6,29 +6,10 @@
 			"label": "C/C++: g++.exe kompiluj aktywny plik",
 			"command": "C:\\msys64\\mingw64\\bin\\g++.exe",
 			"args": [
-				"-fdiagnostics-color=always",
+				"-IC:\\python\\include",
 				"-g",
 				"${file}",
-				"-o",
-				"${fileDirname}\\${fileBasenameNoExtension}.exe"
-			],
-			"options": {
-				"cwd": "${fileDirname}"
-			},
-			"problemMatcher": [
-				"$gcc"
-			],
-			"group": "build",
-			"detail": "kompilator: C:\\msys64\\mingw64\\bin\\g++.exe"
-		},
-		{
-			"type": "cppbuild",
-			"label": "C/C++: g++.exe kompiluj aktywny plik",
-			"command": "C:\\msys64\\mingw64\\bin\\g++.exe",
-			"args": [
-				"-fdiagnostics-color=always",
-				"-g",
-				"${file}",
+				"-LC:\\python\\libs",
 				"-o",
 				"${fileDirname}\\${fileBasenameNoExtension}.exe"
 			],
@@ -43,6 +24,7 @@
 				"isDefault": true
 			},
 			"detail": "kompilator: C:\\msys64\\mingw64\\bin\\g++.exe"
-		}
+		},
+		
 	]
 }

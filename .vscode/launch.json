@@ -5,7 +5,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "g++.exe - Kompiluj i debuguj aktywny plik",
+            "name": "g++.exe",
             "type": "cppdbg",
             "request": "launch",
             "program": "${fileDirname}\\${fileBasenameNoExtension}.exe",
@@ -23,7 +23,8 @@
                     "ignoreFailures": true
                 }
             ],
-            "preLaunchTask": "C/C++: g++.exe kompiluj aktywny plik"
+            "preLaunchTask": "C/C++: g++.exe kompiluj aktywny plik",
+            "includePath": ["C:\\msys64\\mingw64\\include"]
         }
     ]
 }
