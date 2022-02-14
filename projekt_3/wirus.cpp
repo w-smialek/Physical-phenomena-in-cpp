@@ -58,14 +58,13 @@ class SimpleVirus
             }
         }
 
-        SimpleVirus* Reproduce(double popDens, SimpleVirus* ptrtovrs)
+        SimpleVirus* Reproduce(double popDens, SimpleVirus& stest)
         {
             double toss = uniform(gen);
             if (toss < repMaxProb * (1 - popDens))
             {
-                SimpleVirus new_virus = SimpleVirus(repMaxProb, deactProb);
-                ptrtovrs = &new_virus;
-                return ptrtovrs;
+                stest = SimpleVirus(repMaxProb, deactProb);
+                return &stest;
             }
             else
             {
@@ -96,25 +95,38 @@ class ResistVirus
             deactProb = deact;
             mutProb = mut;
             treatments = trt;
+            // cout<<"ini"<<endl;
         }
 
         bool doesDeact(vector<string> treatment)
         {
-            map<string, bool>::iterator itr;
-            
-            for (int i = 0; i < treatment.size(); i++)
+            std::map<string, bool>::iterator ite;
+            for(int a = 0; a < treatment.size(); a++)
             {
-                for (itr = treatments.begin(); itr != treatments.end(); ++itr) 
+                ite = treatments.find(treatment[a]);
+                if (ite->second == false)
                 {
-                    if (itr->first == treatment[i])
-                    {
-                        if (not itr->second)
-                        {
-                            return true;
-                        }
-                    }
-                }   
+                    return true;
+                }
+                
             }
+            
+            // map<string, bool>::iterator itr;
+            
+            // for (int ip = 0; ip < treatment.size(); ip++)
+            // {
+            //     for (itr = treatments.begin(); itr != treatments.end(); ++itr) 
+            //     {
+            //         if (itr->first == treatment[ip])
+            //         {
+            //             // cout<<"pacjent i z listy same"<<endl;
+            //             if (not itr->second)
+            //             {
+            //                 return true;
+            //             }
+            //         }
+            //     }   
+            // }
             
             double toss = uniform(gen);
             if (toss < deactProb)
@@ -127,25 +139,25 @@ class ResistVirus
             }   
         }
 
-        Virus* Reproduce(double popDens, ResistVirus* ptrtovrs)
+        ResistVirus* Reproduce(double popDens, ResistVirus& test)
         {
             map<string, bool>::iterator itr;
 
             double toss = uniform(gen);
             if (toss < repMaxProb * (1 - popDens))
             {
-                ResistVirus new_virus = ResistVirus(repMaxProb, deactProb, mutProb, treatments);
-                ptrtovrs = &new_virus;
-                return ptrtovrs;
-                for (itr = new_virus.treatments.begin(); itr != new_virus.treatments.end(); ++itr)
+                test = ResistVirus(repMaxProb, deactProb, mutProb, treatments);
+
+                for (itr = test.treatments.begin(); itr != test.treatments.end(); ++itr)
                 {
                     toss = uniform(gen);
                     if (toss < mutProb)
                     {
-                        itr->second = not itr->second;
+                        bool b = test.treatments[itr->first];
+                        test.treatments[itr->first] = not b;
                     }
                 }
-                return ptrtovrs;
+            return &test;
             }
             else
             {
@@ -172,37 +184,75 @@ class Patient
 
     vector<string> presentTrts;
     vector<SimpleVirus> virs;
+    vector<ResistVirus> rvirs;
 
-    void update()
+    // void update()
+    // {
+    //     int virn = virs.size();
+    //     double vird = virs.size();
+    //     vird /= maxVir;
+    //     cout<<vird<<endl;
+
+    //     for (int i = 0; i < virn; i++)
+    //     {
+    //         SimpleVirus stest;
+    //         SimpleVirus* ptrtovrs = virs[i].Reproduce(vird, stest);
+    //         if (ptrtovrs != nullptr)
+    //         {
+    //         SimpleVirus nvir = *ptrtovrs;
+    //         virs.push_back(nvir);
+    //         }
+    //         if(virs[i].doesDeact())
+    //         {
+    //             virs.erase(virs.begin() + i);
+    //             i --;
+    //             virn--;
+    //         }
+    //     }
+        
+    // }
+
+        void update()
     {
-        int virn = virs.size();
-        double vird = virs.size();
+        int virn = rvirs.size();
+        double vird = rvirs.size();
         vird /= maxVir;
-        cout<<vird<<endl;
+        cout<<"vird "<<vird<<endl;
 
         for (int i = 0; i < virn; i++)
         {
-            SimpleVirus* ptrtovrs;
-            ptrtovrs = virs[i].Reproduce(vird, ptrtovrs);
+            ResistVirus test;
+            ResistVirus* ptrtovrs = rvirs[i].Reproduce(vird, test);
             if (ptrtovrs != nullptr)
             {
-            SimpleVirus nvir = *ptrtovrs;
-            virs.push_back(nvir);
+            // ResistVirus nvir = *ptrtovrs;
+            rvirs.push_back(*ptrtovrs);
             }
-            if(virs[i].doesDeact())
+            if(rvirs[i].doesDeact(presentTrts))
             {
-                virs.erase(virs.begin() + i);
+                rvirs.erase(rvirs.begin() + i);
                 i --;
+                virn --;
+                if (rvirs.size() == 0)
+                {
+                    break;
+                }
             }
         }
-        
     }
 
-    void Infect(double repr, double deact)
+
+    // void Infect(double repr, double deact)
+    // {
+    //     SimpleVirus vir = SimpleVirus(repr, deact);
+    //     virs.push_back(vir);
+    // }
+    void Infect(double repr, double deact, double mut, map<string, bool> trts)
     {
-        SimpleVirus vir = SimpleVirus(repr, deact);
-        virs.push_back(vir);
+        ResistVirus vir = ResistVirus(repr, deact, mut, trts);
+        rvirs.push_back(vir);
     }
+
 
     void NewTreatment(string trt)
     {
@@ -227,19 +277,26 @@ class Patient
 
 int main()
 {
-    Patient pacjent0;
+    map<string, bool> existent_treatments;
+    existent_treatments.insert(pair<string, bool>("vaccine1", true));
+    existent_treatments.insert(pair<string, bool>("vaccine2", true));
+    existent_treatments.insert(pair<string, bool>("medyczna marihuana", false));
+    existent_treatments.insert(pair<string, bool>("dmt", false));
+    existent_treatments.insert(pair<string, bool>("amantadyna", false));
+
+    Patient pacjent0 = Patient(100);
     pacjent0.NewTreatment("vaccine1");
     pacjent0.NewTreatment("vaccine2");
-    pacjent0.NewTreatment("vaccine3");
-    pacjent0.RemoveTreatment("vaccine2");
-    pacjent0.Infect(0.3,0.02);
+    pacjent0.Infect(0.3,0.01,0.01, existent_treatments);
+
+    cout<<"trts u pacjenta: "<<endl;
     print_strvector(pacjent0.presentTrts);
-    cout<<pacjent0.virs.size()<<endl;
-    for (int ii = 0; ii < 40; ii++)
+    cout<<"======"<<endl;
+
+    for (int ii = 0; ii < 400; ii++)
     {
         pacjent0.update();
-        cout<<pacjent0.virs.size()<<endl;
-        cout<<"elo"<<endl;
+        cout<<ii<<"  n of virs: "<<pacjent0.virs.size()<<endl;
     }
     
     return 0;

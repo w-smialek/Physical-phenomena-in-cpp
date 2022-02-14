@@ -2,9 +2,32 @@
 	"version": "2.0.0",
 	"tasks": [
 		{
+			"type": "shell",
+			"label": "gcc.exe build active file",
+			"command": "C:\\cygwin64\\bin\\gcc.exe",
+			"args": [
+				"-g",
+				"-o",
+				"${fileDirname}\\${fileBasenameNoExtension}.exe",
+				"-Werror",
+				"-Wall",
+				"-Wextra",
+				"-ansi",
+				"-pedantic",
+				"${file}"
+			],
+			"options": {
+				"cwd": "C:\\cygwin64\\bin"
+			},
+			"problemMatcher": [
+				"$gcc"
+			],
+			"group": "build"
+		},
+		{
 			"type": "cppbuild",
 			"label": "C/C++: g++.exe kompiluj aktywny plik",
-			"command": "C:\\msys64\\mingw64\\bin\\g++.exe",
+			"command": "C:\\cygwin64\\bin\\g++.exe",
 			"args": [
 				"-IC:\\python\\include",
 				"-g",
@@ -23,8 +46,7 @@
 				"kind": "build",
 				"isDefault": true
 			},
-			"detail": "kompilator: C:\\msys64\\mingw64\\bin\\g++.exe"
-		},
-		
+			"detail": "kompilator: C:\\cygwin64\\bin\\g++.exe"
+		}
 	]
 }
