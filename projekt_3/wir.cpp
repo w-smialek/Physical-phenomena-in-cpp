@@ -4,6 +4,7 @@
 #include <map>
 #include <iterator>
 #include <algorithm>
+#include <fstream>
 using namespace std;
 
 class Virus
@@ -168,7 +169,7 @@ class Patient
         {
             dvirs = Rvirs.size();
             dvirs /= maxVir;
-            cout<<dvirs<<endl;
+            // cout<<dvirs<<endl;
 
             nvirs = Rvirs.size();
 
@@ -196,7 +197,7 @@ class Patient
         {
             dvirs = Svirs.size();
             dvirs /= maxVir;
-            cout<<dvirs<<endl;
+            // cout<<dvirs<<endl;
 
             nvirs = Svirs.size();
 
@@ -258,24 +259,52 @@ class Patient
 int main()
 {
     map<string, bool> existent_trts;
-    existent_trts.insert(pair<string, bool>("medyczna marihuana", false));
-    existent_trts.insert(pair<string, bool>("dmt", true));
     existent_trts.insert(pair<string, bool>("amantadyna", false));
+    existent_trts.insert(pair<string, bool>("m-rna vaccine", false));
+    existent_trts.insert(pair<string, bool>("vector vaccine", true));
+    existent_trts.insert(pair<string, bool>("medyczna marihuana", false));
+    existent_trts.insert(pair<string, bool>("lewoskretna witamina c", false));
+    existent_trts.insert(pair<string, bool>("piwo", false));
 
-    Patient p0(100);
-    p0.NewTreatment("dmt");
-    p0.SInfect(0.2,0.03);
-    p0.RInfect(0.2, 0.01, 0.05, existent_trts);
+    vector<Patient> pace;
+    for (int ijk = 0; ijk < 100; ijk++)
+    {
+        pace.push_back(Patient(100));
+        pace[ijk].NewTreatment("vector vaccine");
+        pace[ijk].SInfect(0.2,0.03);
+        pace[ijk].RInfect(0.05, 0.01, 0.05, existent_trts);
+    }
+
+    ofstream plik("wirlog.txt");
+
+    for (int igg = 0; igg < 150; igg++)
+    {
     for(int ika = 0; ika < 100; ika++)
     {
-        p0.update(false);
-        cout<<"rozm "<<p0.Rvirs.size()<<endl;
+        pace[ika].update(true);
+        cout<<"rozm "<<pace[ika].Rvirs.size()<<endl;
+        plik << pace[ika].Rvirs.size() << ",";
     }
-    p0.NewTreatment("amantadyna");
-        for(int ika = 0; ika < 100; ika++)
+    plik << endl;
+    }
+    for (int ijk = 0; ijk < 100; ijk++)
     {
-        p0.update(true);
-        cout<<"rozm "<<p0.Rvirs.size()<<endl;
+        pace[ijk].NewTreatment("amantadyna");
     }
+
+    for (int igg = 0; igg < 150; igg++)
+    {
+    for(int ika = 0; ika < 100; ika++)
+    {
+        pace[ika].update(true);
+        cout<<"rozm "<<pace[ika].Rvirs.size()<<endl;
+        plik << pace[ika].Rvirs.size() << ",";
+    }
+    plik << endl;
+    }
+
+    plik.close();
+
+    // system("python C:/Users/Wojtek/Desktop/Programowanie/cpp/projekt_3/plotting.py");
     return 0;
 }

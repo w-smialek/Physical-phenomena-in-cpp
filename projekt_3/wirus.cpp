@@ -293,7 +293,7 @@ int main()
     print_strvector(pacjent0.presentTrts);
     cout<<"======"<<endl;
 
-    for (int ii = 0; ii < 400; ii++)
+    for (int ii = 0; ii < 300; ii++)
     {
         pacjent0.update();
         cout<<ii<<"  n of virs: "<<pacjent0.virs.size()<<endl;
